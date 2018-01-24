@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+		<title>Rxjs</title>
 
 		<link rel="stylesheet" href="css/reveal.css">
 		<link rel="stylesheet" href="css/theme/black.css">
@@ -20,12 +20,307 @@
 			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
 			document.getElementsByTagName( 'head' )[0].appendChild( link );
 		</script>
+    <style>
+        /* remove goofy box-shadow from pre */
+        .reveal section pre {
+            box-shadow: none;
+        }
+
+        /* remove goofy background from code element */
+        .hljs {
+            background: none;
+        }
+
+        .codeoutput {
+            text-align: left;
+        }
+
+        .reveal section p {
+            width: 90%;
+            margin: 0 auto;
+            font-size: 1.25rem;
+        }
+        button.runcode {
+            padding: 5px;
+        }
+
+        .codeoutput {
+            min-height: 80px;
+        }
+
+        p.red {
+            color: red;
+        }
+
+        .code-small {
+            font-size: 70% !important;
+            line-height: 125% !important;
+        }
+
+        code {
+            /* prevent from getting blue outline when selecting */
+            outline: 0;
+        }
+    </style>
 	</head>
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
+				<section>
+                    <h1>Rxjs survival guide</h1>
+                </section>
+
+                <section>
+                    <ul>
+                        <li class="fragment">Promise vs Observable</li>
+                        <li class="fragment">Building blocks</li>
+                        <li class="fragment">Conversion to and from</li>
+                        <li class="fragment">Operators</li>
+                        <li class="fragment">Marble diagrams</li>
+                    </ul>
+                </section>
+
+<section>
+<h2>Promises</h2>
+</section>
+
+<section>
+<pre>
+<code class="code-to-be-run" contenteditable="true">
+const myPromise = new Promise (function(resolve, reject) {
+    resolve(5)
+})
+
+myPromise.then(function(value) {
+    console.log(value)
+})
+</code>
+</pre>
+
+<button class="runcode">Run</button>
+<div class="codeoutput">
+</div>
+</section>
+
+<section>
+<h2>Single value</h2>
+<pre>
+<code class="code-to-be-run" contenteditable="true">
+const myPromise = new Promise (function(resolve, reject) {
+    resolve(5)
+    resolve(10)
+    resolve(15)
+})
+
+myPromise.then(function(myNumber) {
+    console.log(myNumber)
+})
+</code>
+</pre>
+<button class="runcode">Run</button>
+<div class="codeoutput">
+</div>
+</section>
+
+<section>
+<h2>Always async</h2>
+<pre>
+<code class="code-to-be-run" contenteditable="true">
+const myPromise = new Promise (function(resolve, reject) {
+    resolve(5)
+})
+
+console.log('Before')
+myPromise.then(function(value) {
+    console.log(value)
+})
+console.log('After')
+</code>
+</pre>
+<button class="runcode">Run</button>
+<div class="codeoutput">
+</div>
+</section>
+
+<section>
+<h2>Chaining</h2>
+<pre>
+<code class="code-to-be-run" contenteditable="true">
+const promise1 = new Promise (function(resolve, reject) {
+    resolve("Hello")
+})
+
+promise2 = promise1.then(function(value) {
+    return value + " World"
+})
+
+promise2.then(function(value) {
+    console.log(value) 
+})
+</code>
+</pre>
+<button class="runcode">Run</button>
+<div class="codeoutput">
+</div>
+</section>
+
+<section>
+<h2>Rx.Observable</h2>
+</section>
+
+<section>
+<pre>
+<code class="code-to-be-run" contenteditable="true">
+const myObservable = new Rx.Observable(function(observer) {
+    observer.next(1)
+})
+</code>
+</pre>
+</section>
+
+<section>
+<h2>Multiple values</h2>
+<pre>
+<code class="code-to-be-run" contenteditable="true">
+const myObservable = new Rx.Observable(function(observer) {
+    observer.next(1)
+    observer.next(2)
+    observer.next(3)
+    observer.complete()
+})
+
+myObservable.subscribe(function(value) {
+    console.log(value)
+})
+</code>
+</pre>
+<button class="runcode">Run</button>
+<div class="codeoutput">
+</div>
+</section>
+
+<section>
+<h2>Sync + Async</h2>
+<pre>
+<code class="code-to-be-run" contenteditable="true">
+const myObservable = new Rx.Observable(function(observer) {
+    observer.next(1)
+    setTimeout(function() { observer.next(2) }, 2000)
+})
+
+console.log('Before')
+myObservable.subscribe(function(value) {
+    console.log(value)
+})
+console.log('After')
+</code>
+</pre>
+<button class="runcode">Run</button>
+<div class="codeoutput">
+</div>
+</section>
+
+<section>
+<h2>Implementing a Promise</h2>
+<pre>
+<code class="code-to-be-run code-small" contenteditable="true">// Observable
+const observable = new Rx.Observable(function(observer) {
+    setTimeout(function() {
+        observer.next(1)
+        observer.complete()
+    })
+})
+observable.subscribe(function(value) {
+    console.log(value)
+});
+
+// Promise
+const promise = new Promise(function(resolve) {
+    resolve(1)
+})
+
+promise.then(function(value) {
+    console.log(value)
+})
+</code>
+</pre>
+</section>
+
+<section>
+    <h2>Rxjs library</h2>
+</section>
+
+<section>
+    <h2>Converting to</h2>
+
+<pre>
+<code class="code-small">
+// From one or multiple values
+Rx.Observable.of('foo', 'bar')
+
+// From array of values
+Rx.Observable.from([1,2,3])
+
+// From an event
+Rx.Observable.fromEvent(
+    document.querySelector('button'),
+    'click'
+)
+
+// From a Promise
+Rx.Observable.fromPromise(fetch('/users'))
+</code>
+</pre>
+</section>
+
+<section>
+    <h2>Converting from</h2>
+
+<pre>
+<code>
+// To a Promise
+const observable = Rx.Observable.of(42)
+const promise = observable.toPromise()
+</code>
+</pre>
+</section>
+
+<section>
+    <h2>Operators</h2>
+</section>
+
+<section>
+<pre>
+<code class="code-to-be-run" contenteditable="true">
+const observable = Rx.Observable
+    .interval(500)
+    .take(5)
+    .map(function() {
+        return "Hello!"
+    })
+
+observable.subscribe(function(value) {
+    console.log(value)
+})
+</code>
+</pre>
+<button class="runcode">Run</button>
+<div class="codeoutput">
+</div>
+</section>
+
+<section>
+    <h2><a href="http://reactivex.io/rxjs/">Rxjs Documentation</a></h2>
+</section>
+
+<section>
+    <h2>Marble Diagrams</h2>
+</section>
+
+<section>
+<h2>Questions?</h2>
+</section>
+
 			</div>
 		</div>
 
@@ -33,7 +328,7 @@
 		<script src="js/reveal.js"></script>
 
 		<script>
-			// More info about config & dependencies:
+			// More info about config & dependencies:o0p0oo9oo0o§§§1§am z
 			// - https://github.com/hakimel/reveal.js#configuration
 			// - https://github.com/hakimel/reveal.js#dependencies
 			Reveal.initialize({
@@ -41,7 +336,10 @@
 					{ src: 'plugin/markdown/marked.js' },
 					{ src: 'plugin/markdown/markdown.js' },
 					{ src: 'plugin/notes/notes.js', async: true },
-					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+                    { src: 'notes/rxjs.js' },
+                    { src: 'notes/jquery-3.2.1.min.js' },
+                    { src: 'notes/contrib.js' }
 				]
 			});
 		</script>

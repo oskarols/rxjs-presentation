@@ -1,0 +1,23 @@
+
+
+
+Så vi börjar titta på Rx.Observable, en av dom mest fundamentala byggstenarna i rxjs.
+
+För att ta bort magin börjar vi med att skapa en egen Observable.
+
+Man skapar en observable med en statisk metod som heter create, där man skickar in en funktion
+som tar en observer som inparameter.
+Observern kan göra tre saker: .next, .error och .complete
+
+Så det här motsvarar i princip ett promise. Man trycker ut ett värde.
+
+Direkt kan man då börja fundera. Körs det här asynkront?
+
+Och här ser vi hur vi använder .error inuti för att skapa ett fel
+Därefter kommer ingenting annat skickas från Observable:n
+
+
+När man subscribar så körs den funktionen man skickat in till konstruktorn.
+Tänk på det som en liten maskin som ligger där inne och snurrar och kan generera värden.
+
+Gå igenom marble diagrams, hur man läser dom och hur dom fungerar
